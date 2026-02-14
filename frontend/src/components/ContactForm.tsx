@@ -20,7 +20,7 @@ export default function ContactForm() {
   const onType = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     // analytics
-    if (!loading && !done) trackEvent('form_start');
+    if (!loading && !done) trackEvent('form_start', { field: e.target.name, value: e.target.value });
   };
 
   const sendData = async (e: any) => {
@@ -47,11 +47,11 @@ export default function ContactForm() {
 
       setDone(true);
       setForm({ name: '', email: '', phone: '', message: '' });
-      trackEvent('form_submit_success');
+      trackEvent('form_submit_success', { response: json });
 
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to send.');
-      trackEvent('form_submit_error');
+      trackEvent('form_submit_error', { error: err.message });
     } finally {
       setLoading(false);
     }
