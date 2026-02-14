@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
+import { ArrowUpRight, Loader2 } from 'lucide-react';
 
 export default function ContactForm() {
   const [form, setForm] = useState({
@@ -40,6 +41,7 @@ export default function ContactForm() {
       const json = await res.json();
 
       if (!res.ok) {
+        // use the server message or a default one
         throw new Error(json.message || 'Something went wrong');
       }
 
@@ -57,65 +59,91 @@ export default function ContactForm() {
 
   if (done) {
     return (
-      <div className="p-6 bg-green-50 text-green-700 rounded text-center border border-green-200">
-        <h3 className="text-xl font-bold mb-2">Pesan Terkirim!</h3>
-        <p>Terima kasih sudah menghubungi kami.</p>
-        <button onClick={() => setDone(false)} className="mt-4 underline">Kirim lagi</button>
+      <div className="p-8 bg-green-50 text-green-700 rounded-2xl text-center border border-green-200">
+        <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
+        <p>Thank you for contacting us. We will get back to you shortly.</p>
+        <button onClick={() => setDone(false)} className="mt-6 underline font-semibold">Send another message</button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={sendData} className="bg-white p-6 rounded shadow-sm border border-gray-200" id="contact">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Kirim Pesan</h2>
+    <form onSubmit={sendData} className="space-y-6" id="contact">
       
       {errorMsg && (
-        <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-100">
           {errorMsg}
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        <input
-          name="name"
-          value={form.name}
-          onChange={onType}
-          placeholder="Nama Lengkap"
-          className="border p-2 rounded w-full"
-          required
-        />
-        <input
-          name="email"
-          type="email"
-          value={form.email}
-          onChange={onType}
-          placeholder="Email"
-          className="border p-2 rounded w-full"
-          required
-        />
-        <input
-          name="phone"
-          value={form.phone}
-          onChange={onType}
-          placeholder="Nomor HP"
-          className="border p-2 rounded w-full"
-          required
-        />
-        <textarea
-          name="message"
-          value={form.message}
-          onChange={onType}
-          rows={4}
-          placeholder="Pesan Anda..."
-          className="border p-2 rounded w-full"
-          required
-        />
+      <div className="space-y-6">
+        <div>
+          <label className="block text-sm text-gray-900 mb-2">Name (<span className="text-red-500">*</span>)</label>
+          <input
+            name="name"
+            value={form.name}
+            onChange={onType}
+            placeholder="Enter Your Full Name"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all placeholder-gray-400"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-900 mb-2">Phone Number (<span className="text-red-500">*</span>)</label>
+          <input
+            name="phone"
+            value={form.phone}
+            onChange={onType}
+            placeholder="Enter Your Phone Number"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all placeholder-gray-400"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-900 mb-2">Email (<span className="text-red-500">*</span>)</label>
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={onType}
+            placeholder="Enter Your Email"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all placeholder-gray-400"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-900 mb-2">Message (<span className="text-red-500">*</span>)</label>
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={onType}
+            rows={5}
+            placeholder="Enter Your Message"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all placeholder-gray-400 resize-none"
+            required
+          />
+        </div>
         
         <button 
           disabled={loading}
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="group flex items-center gap-3 border border-blue-900 text-blue-900 px-2 py-2 rounded-full hover:bg-blue-50 transition-colors font-bold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Mengirim...' : 'Kirim Sekarang'}
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            <>
+              Submit Message
+              <div className="bg-blue-900 text-white rounded-full p-1 group-hover:scale-125 transition-transform">
+                <ArrowUpRight className="w-8 h-8" />
+              </div>
+            </>
+          )}
         </button>
       </div>
     </form>
